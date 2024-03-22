@@ -1,7 +1,6 @@
 ﻿#include <iostream>
 #include <SDL.h>
 #include <fstream>
-#include <SDL_image.h>
 
 #include "LoaderTools.h"
 
@@ -29,8 +28,8 @@ int main(int argc, char* argv[])
 		return 1;
 	}
 
-	SDL_SetHint(SDL_HINT_RENDER_DRIVER, "direct3d");
-	auto renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+	SDL_SetHint(SDL_HINT_RENDER_DRIVER, "direct3d11");
+	auto renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
 	SDL_RenderPresent(renderer);
 
@@ -50,12 +49,18 @@ int main(int argc, char* argv[])
 
 		SDL_RenderClear(renderer);
 
-		int pos = 0;
+		int posX = 0;
+		int posY = 0;
 		for (auto& pokemon : *pokemons)
 		{
-			auto rect = new SDL_Rect(pos, 0, 384, 256);
+			auto rect = new SDL_Rect(posX, posY, 384, 256);
 			SDL_RenderCopy(renderer, pokemon.Texture, nullptr, rect);
-			pos += 384;
+			posX += 384;
+			if (posX >= SCREEN_WIDTH)
+			{
+				posX = 0;
+				posY += 256;
+			}
 		}
 
 		SDL_RenderPresent(renderer);
