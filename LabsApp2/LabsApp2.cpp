@@ -3,60 +3,65 @@
 #include <fstream>
 #include <SDL_image.h>
 
-constexpr int SCREEN_WIDTH = 640;
+#include "LoaderTools.h"
+
+constexpr int SCREEN_WIDTH = 1440;
 constexpr int SCREEN_HEIGHT = 480;
 
 int main(int argc, char* argv[])
 {
-    std::cout << "Starting...\n";    
+	std::cout << "Starting...\n";
 
-    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0)
-    {
-        return 1;
-    }
+	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0)
+	{
+		return 1;
+	}
 
-    std::cout << "Initializing display...\n";
-    SDL_Window* window = SDL_CreateWindow("SDL2_App!", SDL_WINDOWPOS_UNDEFINED,
-                                          SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT,
-                                          SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL);
+	std::cout << "Initializing display...\n";
+	SDL_Window* window = SDL_CreateWindow("SDL2_App!", SDL_WINDOWPOS_UNDEFINED,
+										  SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT,
+										  SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL);
 
-    std::cout << "Initialized\n";
+	std::cout << "Initialized\n";
 
-    if (window == nullptr)  
-    {
-        return 1;
-    }
+	if (window == nullptr)
+	{
+		return 1;
+	}
 
-    auto render = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+	SDL_SetHint(SDL_HINT_RENDER_DRIVER, "direct3d");
+	auto renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 
-    SDL_RenderPresent(render);
+	SDL_RenderPresent(renderer);
 
+	const auto pokemons = LoadTextures("data/pokemons/", renderer);
 
-    auto bit = IMG_Load("data/pokemons/den/texture.png");
-	if (!bit)
-    {
-        std::cout << "IMG_Load Error: " << IMG_GetError() << std::endl;
-        return 1;
-    }
+	auto quit = false;
+	while (!quit)
+	{
+		SDL_Event ev;
+		while (SDL_PollEvent(&ev))
+		{
+			switch (ev.type)
+			{
+				case SDL_QUIT: quit = true; break;
+			}
+		}
 
-    auto texture = SDL_CreateTextureFromSurface(render, bit);
-    if (!texture)
-    {
-        std::cout << "CreateTextureFromSurface Error: " << SDL_GetError() << std::endl;
-        SDL_FreeSurface(bit);
-        return 1;
-    }
-    SDL_FreeSurface(bit);
+		SDL_RenderClear(renderer);
 
+		int pos = 0;
+		for (auto& pokemon : *pokemons)
+		{
+			auto rect = new SDL_Rect(pos, 0, 384, 256);
+			SDL_RenderCopy(renderer, pokemon.Texture, nullptr, rect);
+			pos += 384;
+		}
 
-    SDL_RenderCopy(render, texture, nullptr, nullptr);
-    SDL_RenderPresent(render);
+		SDL_RenderPresent(renderer);
+	}
 
+	SDL_DestroyWindow(window);
 
-    SDL_Delay(85000);
-    SDL_DestroyTexture(texture);
-    SDL_DestroyRenderer(render);
-    SDL_DestroyWindow(window);
-
-    SDL_Quit();
+	SDL_Quit();
 }
