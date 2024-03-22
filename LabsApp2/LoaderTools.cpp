@@ -7,9 +7,9 @@
 #include <SDL_image.h>
 
 
-std::vector<Pokemon>* LoadTextures(const std::string& path, SDL_Renderer*& renderer)
+std::vector<Pokemon> LoadTextures(const std::string& path, SDL_Renderer*& renderer)
 {
-    auto pokemons = new std::vector<Pokemon>();
+    auto pokemons = std::vector<Pokemon>();
 
     int c = 0;
     for (const auto& entry : std::filesystem::directory_iterator(path))
@@ -30,7 +30,7 @@ std::vector<Pokemon>* LoadTextures(const std::string& path, SDL_Renderer*& rende
             }
             pokemon.Texture = texture;
 
-            pokemons->push_back(pokemon);
+            pokemons.push_back(pokemon);
         }
         c++;
     }

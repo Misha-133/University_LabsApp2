@@ -31,8 +31,6 @@ int main(int argc, char* argv[])
 	SDL_SetHint(SDL_HINT_RENDER_DRIVER, "direct3d11");
 	auto renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
-	SDL_RenderPresent(renderer);
-
 	const auto pokemons = LoadTextures("data/pokemons/", renderer);
 
 	auto quit = false;
@@ -53,8 +51,8 @@ int main(int argc, char* argv[])
 		int posY = 0;
 		for (auto& pokemon : *pokemons)
 		{
-			auto rect = new SDL_Rect(posX, posY, 384, 256);
-			SDL_RenderCopy(renderer, pokemon.Texture, nullptr, rect);
+			auto rect = SDL_Rect(posX, posY, 384, 256);
+			SDL_RenderCopy(renderer, pokemon.Texture, nullptr, &rect);
 			posX += 384;
 			if (posX >= SCREEN_WIDTH)
 			{
