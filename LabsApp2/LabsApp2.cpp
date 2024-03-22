@@ -3,6 +3,7 @@
 #include <fstream>
 
 #include "LoaderTools.h"
+#include "GameState.h"
 
 constexpr int SCREEN_WIDTH = 1440;
 constexpr int SCREEN_HEIGHT = 480;
@@ -32,6 +33,8 @@ int main(int argc, char* argv[])
 	auto renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
 	const auto pokemons = LoadTextures("data/pokemons/", renderer);
+
+	auto state = GameState();
 
 	auto quit = false;
 	while (!quit)
