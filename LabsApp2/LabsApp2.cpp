@@ -64,6 +64,10 @@ int main(int argc, char* argv[])
 		SDL_RenderPresent(renderer);
 	}
 
+	for (auto pok : pokemons)
+	{
+		pok.Destroy();
+	}
 	SDL_DestroyWindow(window);
 
 	SDL_Quit();
