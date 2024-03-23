@@ -4,6 +4,7 @@
 
 #include "LoaderTools.h"
 #include "GameState.h"
+#include "UIUtils.h"
 
 constexpr int SCREEN_WIDTH = 1440;
 constexpr int SCREEN_HEIGHT = 480;
@@ -19,8 +20,8 @@ int main(int argc, char* argv[])
 
 	std::cout << "Initializing display...\n";
 	SDL_Window* window = SDL_CreateWindow("SDL2_App!", SDL_WINDOWPOS_UNDEFINED,
-										  SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT,
-										  SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL);
+		SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT,
+		SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL);
 
 	std::cout << "Initialized\n";
 
@@ -35,6 +36,9 @@ int main(int argc, char* argv[])
 	const auto pokemons = LoadTextures("data/pokemons/", renderer);
 
 	auto state = GameState();
+	state.IsRunning = true;
+	state.PlayerOneHP = 100;
+	int a = 0;
 
 	auto quit = false;
 	while (!quit)
@@ -49,20 +53,13 @@ int main(int argc, char* argv[])
 		}
 
 		SDL_RenderClear(renderer);
+		SDL_SetRenderDrawColor(renderer, 48, 48, 48, 0);
+		auto backgroundRect = SDL_Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+		SDL_RenderFillRect(renderer, &backgroundRect);
 
-		int posX = 0;
-		int posY = 0;
-		for (auto& pokemon : *pokemons)
-		{
-			auto rect = SDL_Rect(posX, posY, 384, 256);
-			SDL_RenderCopy(renderer, pokemon.Texture, nullptr, &rect);
-			posX += 384;
-			if (posX >= SCREEN_WIDTH)
-			{
-				posX = 0;
-				posY += 256;
-			}
-		}
+
+		DrawUI(renderer, state);
+
 
 		SDL_RenderPresent(renderer);
 	}
