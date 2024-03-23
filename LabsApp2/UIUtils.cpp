@@ -18,17 +18,18 @@ void DrawHealthBar(SDL_Renderer*& renderer, const int x, const int y, const int 
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 0);
 	SDL_RenderFillRect(renderer, &rect);
 
-	const int width = (value / (float)total) * (w - 4);
+	const float percent = (value / (float)total);
+	const int width = percent * (w - 4);
 
 	rect = SDL_Rect(x + 2, y + 2, width, h - 4);
-	SDL_SetRenderDrawColor(renderer, 192, 16, 32, 0);
+	SDL_SetRenderDrawColor(renderer, 228 * (1 - percent), 16 + 228 * percent, 32, 0);
 	SDL_RenderFillRect(renderer, &rect);
 
 	static auto sans = TTF_OpenFont("data/fonts/ms_comic_sans.ttf", 18);
-	static SDL_Color hpColor = { 64, 192, 255, 0 };
+	const auto hpColor = SDL_Color(64 + 190 * percent, 192 - 64 * percent, 255 - 192 * percent, 0);
 
 	auto str = std::to_string(value) + "/" + std::to_string(total);
-	
+
 	SDL_Surface* surfaceMessage = TTF_RenderText_Blended(sans, str.data(), hpColor);
 	SDL_Texture* message = SDL_CreateTextureFromSurface(renderer, surfaceMessage);
 
