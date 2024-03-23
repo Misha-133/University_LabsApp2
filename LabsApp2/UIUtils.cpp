@@ -1,14 +1,43 @@
 #include "UIUtils.h"
 #include <SDL_render.h>
 #include <SDL_ttf.h>
-#include "GameState.h"
+#include <vector>
 
-void DrawUI(SDL_Renderer*& renderer, const GameState& state)
+#include "GameState.h"
+#include "UiElement.h"
+
+std::vector<UiElement*> LoadUi()
+{
+	std::vector<UiElement*> ui;
+
+	auto button = new UiElement();
+	button->X = 256;
+	button->Y = 192;
+	button->W = 128;
+	button->H = 64;
+	button->B = 3;
+
+	button->BackgroundColorHover = SDL_Color( 192, 255, 192, 0 );
+	button->BackgroundColorInactive = SDL_Color( 0, 128, 128, 0 );
+	button->BackgroundColorDefault = SDL_Color( 0, 0, 0, 0 );
+	button->BorderColor = SDL_Color( 255, 255, 255, 0 );
+
+	ui.push_back(button);
+
+	return ui;
+}
+
+void DrawUI(SDL_Renderer*& renderer, const GameState& state, std::vector<UiElement*>& ui)
 {
 	if (state.IsRunning)
 	{
 		DrawHealthBar(renderer, 0, 0, 192, 32, state.PlayerOneHP, 100);
 		DrawHealthBar(renderer, 448, 0, 192, 32, state.PlayerTwoHP, 100);
+
+		for (auto element : ui)
+		{
+			element->Draw(renderer);
+		}
 	}
 }
 
@@ -39,4 +68,11 @@ void DrawHealthBar(SDL_Renderer*& renderer, const int x, const int y, const int 
 
 	SDL_FreeSurface(surfaceMessage);
 	SDL_DestroyTexture(message);
+}
+
+void DrawBackground(SDL_Renderer*& renderer, const int& w, const int& h)
+{
+	SDL_SetRenderDrawColor(renderer, 48, 48, 48, 0);
+	auto backgroundRect = SDL_Rect(0, 0, w, h);
+	SDL_RenderFillRect(renderer, &backgroundRect);
 }

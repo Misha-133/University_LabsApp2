@@ -20,8 +20,6 @@ std::vector<Pokemon> LoadTextures(const std::string& path, SDL_Renderer*& render
             pokemon.Name = entry.path().filename().string();
             pokemon.Id = c;
 
-            std::cout << entry.path().string();
-
             auto texture = IMG_LoadTexture(renderer, entry.path().string().append("/texture.png").data());
             if (!texture)
             {

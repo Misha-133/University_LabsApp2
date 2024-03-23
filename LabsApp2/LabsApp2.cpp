@@ -5,6 +5,7 @@
 
 #include "LoaderTools.h"
 #include "GameState.h"
+#include "UiElement.h"
 #include "UIUtils.h"
 
 constexpr int SCREEN_WIDTH = 640;
@@ -21,9 +22,9 @@ int main(int argc, char* argv[])
 	}
 
 	std::cout << "Initializing display...\n";
-	SDL_Window* window = SDL_CreateWindow("SDL2_App!", SDL_WINDOWPOS_UNDEFINED,
-		SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT,
-		SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL);
+	SDL_Window* window = SDL_CreateWindow("Pokokek", SDL_WINDOWPOS_UNDEFINED,
+										  SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT,
+										  SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL);
 
 	std::cout << "Initialized\n";
 
@@ -43,6 +44,8 @@ int main(int argc, char* argv[])
 	state.PlayerTwoHP = 50;
 	long frameCounter = 0;
 
+	auto uiElements = LoadUi();
+
 	auto quit = false;
 	while (!quit)
 	{
@@ -54,27 +57,30 @@ int main(int argc, char* argv[])
 			{
 				case SDL_QUIT: quit = true; break;
 			}
+
+			for (auto ui : uiElements)
+			{
+				ui->HandleEvent(ev);
+			}
 		}
 
 		SDL_RenderClear(renderer);
-		SDL_SetRenderDrawColor(renderer, 48, 48, 48, 0);
-		auto backgroundRect = SDL_Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-		SDL_RenderFillRect(renderer, &backgroundRect);
+		DrawBackground(renderer, SCREEN_WIDTH, SCREEN_HEIGHT);
 
 		if (frameCounter % 5 == 0)
 		{
-			state.PlayerOneHP --;
-			state.PlayerTwoHP --;
+			state.PlayerOneHP--;
+			state.PlayerTwoHP--;
 
-			if(state.PlayerOneHP <= 0)
+			if (state.PlayerOneHP <= 0)
 				state.PlayerOneHP = 100;
 
-			if(state.PlayerTwoHP <= 0)
+			if (state.PlayerTwoHP <= 0)
 				state.PlayerTwoHP = 100;
 		}
 
 
-		DrawUI(renderer, state);
+		DrawUI(renderer, state, uiElements);
 
 		SDL_RenderPresent(renderer);
 	}
