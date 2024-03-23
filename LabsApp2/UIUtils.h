@@ -11,4 +11,8 @@ void DrawUI(SDL_Renderer*& renderer, const GameState& state, std::vector<UiEleme
 
 void DrawHealthBar(SDL_Renderer*&, int, int, int, int, unsigned int, unsigned int);
 
-void DrawBackground(SDL_Renderer*& renderer, const int& w, const int& h);
+void DrawText(SDL_Renderer*& renderer, std::string& text, int& x, int& y, SDL_Color& color);
+
+void DrawTextCentered(SDL_Renderer*& renderer, std::string& text, int& x, int& y, int& w, int& h, SDL_Color& color);
+
+void DrawBackground(SDL_Renderer*& renderer, int w, int h);

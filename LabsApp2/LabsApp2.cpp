@@ -8,8 +8,8 @@
 #include "UiElement.h"
 #include "UIUtils.h"
 
-constexpr int SCREEN_WIDTH = 640;
-constexpr int SCREEN_HEIGHT = 480;
+#define SCREEN_WIDTH 640
+#define SCREEN_HEIGHT 480
 
 int main(int argc, char* argv[])
 {
