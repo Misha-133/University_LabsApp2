@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "Pokemon.h"
 
 struct GameState
 {
@@ -8,4 +9,7 @@ struct GameState
 
 	unsigned int PlayerOneHP;
 	unsigned int PlayerTwoHP;
+
+	Pokemon* PlayerOne;
+	Pokemon* PlayerTwo;
 };

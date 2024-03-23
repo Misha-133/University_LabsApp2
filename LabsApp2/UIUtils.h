@@ -3,6 +3,6 @@
 #include "GameState.h"
 
 
-void DrawUI(SDL_Renderer*& renderer, GameState& state);
+void DrawUI(SDL_Renderer*& renderer, const GameState& state);
 
-void DrawHealthBar(SDL_Renderer*&, int, int, int, int, int, int);
+void DrawHealthBar(SDL_Renderer*&, int, int, int, int, unsigned int, unsigned int);
