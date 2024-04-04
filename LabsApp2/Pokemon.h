@@ -8,7 +8,9 @@ struct Pokemon
 {
 	int Id;
 	std::string Name;
+
 	int HP;
+	int Energy;
 	int Damage;
 	int Weakness;
 
@@ -20,5 +22,6 @@ struct Pokemon
 
 // display name
 // hp
+// energy
 // damage
 // weakness
