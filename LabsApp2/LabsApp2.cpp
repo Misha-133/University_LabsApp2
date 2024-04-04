@@ -36,13 +36,18 @@ int main(int argc, char* argv[])
 	SDL_SetHint(SDL_HINT_RENDER_DRIVER, "direct3d11");
 	auto renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
-	const auto pokemons = LoadPokemons("data/pokemons/", renderer);
+	auto pokemons = LoadPokemons("data/pokemons/", renderer);
 
 	auto state = GameState();
 	state.IsRunning = true;
 	state.PlayerOneHP = 100;
 	state.PlayerTwoHP = 50;
 	long frameCounter = 0;
+
+	state.PlayerOne = pokemons.data();
+	state.PlayerTwo = &pokemons[1];
+	state.PlayerOneHP = state.PlayerOne->HP;
+	state.PlayerTwoHP = state.PlayerTwo->HP;
 
 	auto uiElements = LoadUi();
 
@@ -73,14 +78,16 @@ int main(int argc, char* argv[])
 			state.PlayerTwoHP--;
 
 			if (state.PlayerOneHP <= 0)
-				state.PlayerOneHP = 100;
+				state.PlayerOneHP = state.PlayerOne->HP;
 
 			if (state.PlayerTwoHP <= 0)
-				state.PlayerTwoHP = 100;
+				state.PlayerTwoHP = state.PlayerTwo->HP;
 		}
 
-
 		DrawUI(renderer, state, uiElements);
+
+		state.PlayerOne->Draw(renderer, 64, 64, 192, 192, false);
+		state.PlayerTwo->Draw(renderer, 384, 64, 192, 192, true);
 
 		SDL_RenderPresent(renderer);
 	}

@@ -18,6 +18,7 @@ struct Pokemon
 	SDL_Texture *Texture;
 
 	void Destroy();
+	void Draw(SDL_Renderer*& renderer, int x, int y, int w, int h, bool mirror);
 };
 
 // display name

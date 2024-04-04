@@ -10,43 +10,26 @@ std::vector<UiElement*> LoadUi()
 {
 	std::vector<UiElement*> ui;
 
-	auto button = new UiElement();
-	button->X = 256;
-	button->Y = 192;
-	button->W = 128;
-	button->H = 64;
-	button->B = 3;
+	//auto button = new UiElement();
+	//button->X = 256;
+	//button->Y = 192;
+	//button->W = 128;
+	//button->H = 64;
+	//button->B = 3;
 
-	button->BackgroundColorHover = SDL_Color( 192, 255, 192, 0 );
-	button->BackgroundColorInactive = SDL_Color( 0, 128, 128, 0 );
-	button->BackgroundColorDefault = SDL_Color( 0, 0, 0, 0 );
-	button->BorderColor = SDL_Color( 255, 255, 255, 0 );
-	button->BackgroundColorPressed = SDL_Color( 64, 255, 64, 0 );
-	button->TextColor = SDL_Color( 32, 32, 255, 0 );
+	//button->BackgroundColorHover = SDL_Color( 192, 255, 192, 0 );
+	//button->BackgroundColorInactive = SDL_Color( 0, 128, 128, 0 );
+	//button->BackgroundColorDefault = SDL_Color( 0, 0, 0, 0 );
+	//button->BorderColor = SDL_Color( 255, 255, 255, 0 );
+	//button->BackgroundColorPressed = SDL_Color( 64, 255, 64, 0 );
+	//button->TextColor = SDL_Color( 32, 32, 255, 0 );
 
-	button->Text = "TestBtn";
+	//button->Text = "TestBtn";
 
-	ui.push_back(button);
+	//ui.push_back(button);
 
 
-	auto button2 = new UiElement();
-	button2->X = 64;
-	button2->Y = 192;
-	button2->W = 128;
-	button2->H = 64;
-	button2->B = 3;
-	button2->IsActive = false;
 
-	button2->BackgroundColorHover = SDL_Color(192, 255, 192, 0);
-	button2->BackgroundColorInactive = SDL_Color(0, 128, 128, 0);
-	button2->BackgroundColorDefault = SDL_Color(0, 0, 0, 0);
-	button2->BorderColor = SDL_Color(255, 255, 255, 0);
-	button2->BackgroundColorPressed = SDL_Color(64, 255, 64, 0);
-	button2->TextColor = SDL_Color(128, 128, 255, 0);
-
-	button2->Text = "Inactive";
-
-	ui.push_back(button2);
 
 	return ui;
 }
@@ -55,8 +38,8 @@ void DrawUI(SDL_Renderer*& renderer, const GameState& state, std::vector<UiEleme
 {
 	if (state.IsRunning)
 	{
-		DrawHealthBar(renderer, 0, 0, 192, 32, state.PlayerOneHP, 100);
-		DrawHealthBar(renderer, 448, 0, 192, 32, state.PlayerTwoHP, 100);
+		DrawHealthBar(renderer, 0, 0, 192, 32, state.PlayerOneHP, state.PlayerOne->HP);
+		DrawHealthBar(renderer, 448, 0, 192, 32, state.PlayerTwoHP, state.PlayerTwo->HP);
 
 		for (auto element : ui)
 		{
