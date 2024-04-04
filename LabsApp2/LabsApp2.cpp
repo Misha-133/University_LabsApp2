@@ -36,7 +36,7 @@ int main(int argc, char* argv[])
 	SDL_SetHint(SDL_HINT_RENDER_DRIVER, "direct3d11");
 	auto renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
-	const auto pokemons = LoadTextures("data/pokemons/", renderer);
+	const auto pokemons = LoadPokemons("data/pokemons/", renderer);
 
 	auto state = GameState();
 	state.IsRunning = true;

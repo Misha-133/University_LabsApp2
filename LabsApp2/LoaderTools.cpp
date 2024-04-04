@@ -4,10 +4,11 @@
 #include <iostream>
 #include <vector>
 #include <filesystem>
+#include <fstream>
 #include <SDL_image.h>
 
 
-std::vector<Pokemon> LoadTextures(const std::string& path, SDL_Renderer*& renderer)
+std::vector<Pokemon> LoadPokemons(const std::string& path, SDL_Renderer*& renderer)
 {
     auto pokemons = std::vector<Pokemon>();
 
@@ -27,6 +28,20 @@ std::vector<Pokemon> LoadTextures(const std::string& path, SDL_Renderer*& render
                 continue;
             }
             pokemon.Texture = texture;
+
+            std::ifstream file(entry.path().string().append("/stats.txt").data());
+
+            if (!file)
+            {
+                std::cout << "Error loading stats\n";
+                continue;
+            }
+
+            file >> pokemon.Name;
+            file >> pokemon.HP;
+            file >> pokemon.Damage;
+            file >> pokemon.Weakness;
+            file.close();
 
             pokemons.push_back(pokemon);
         }

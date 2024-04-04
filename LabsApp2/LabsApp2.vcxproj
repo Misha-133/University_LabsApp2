@@ -128,6 +128,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Enums.h" />
     <ClCompile Include="GameState.cpp" />
     <ClCompile Include="LabsApp2.cpp" />
     <ClCompile Include="LoaderTools.cpp" />
