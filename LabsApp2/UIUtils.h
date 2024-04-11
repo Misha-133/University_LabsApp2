@@ -9,7 +9,11 @@ std::vector<UiElement*> LoadUi();
 
 void DrawUI(SDL_Renderer*& renderer, const GameState& state, std::vector<UiElement*>& ui);
 
+void DrawAttackSelect(SDL_Renderer*& renderer, const GameState& state, Pokemon* pokemon);
+
 void DrawHealthBar(SDL_Renderer*&, int, int, int, int, unsigned int, unsigned int);
+
+void DrawEnergyBar(SDL_Renderer*&, int, int, int, int, unsigned int, unsigned int);
 
 void DrawText(SDL_Renderer*& renderer, std::string& text, int& x, int& y, SDL_Color& color);
 

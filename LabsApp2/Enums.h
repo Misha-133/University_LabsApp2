@@ -1,4 +1,5 @@
-﻿
+﻿#pragma once
+
 enum DamageType
 {
 	DamageType_Fire = 0b1,
@@ -7,4 +8,10 @@ enum DamageType
 	DamageType_Poison = 0b1000,
 	DamageType_Physical = 0b10000,
 	DamageType_Magic = 0b100000
+};
+
+enum GameMenu
+{
+	GameMenu_None = 0,
+	GameMenu_AttackSelection = 1,
 };
