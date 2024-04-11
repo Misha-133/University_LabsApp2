@@ -85,6 +85,7 @@ int main(int argc, char* argv[])
 						state.MenuItem = 0;
 					break;
 				case SDLK_KP_ENTER:
+				case SDLK_RETURN:
 					if (state.CurrentMenu == GameMenu_AttackSelection)
 					{
 						DamagePokemon(state);
