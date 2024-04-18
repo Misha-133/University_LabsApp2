@@ -7,7 +7,6 @@
 #include "GameLogic.h"
 #include "LoaderTools.h"
 #include "GameState.h"
-#include "UiElement.h"
 #include "UIUtils.h"
 
 #define SCREEN_WIDTH 640
@@ -41,21 +40,14 @@ int main(int argc, char* argv[])
 	auto pokemons = LoadPokemons("data/pokemons/", renderer);
 
 	auto state = GameState();
-	state.IsRunning = true;
 
 	long frameCounter = 0;
 
-	state.PlayerOne = &pokemons[0];
-	state.PlayerTwo = &pokemons[1];
-	state.PlayerOneHP = state.PlayerOne->HP;
-	state.PlayerTwoHP = state.PlayerTwo->HP;
-	state.PlayerOneEnergy = state.PlayerOne->Energy;
-	state.PlayerTwoEnergy = state.PlayerTwo->Energy;
+	state.AllPokemons = &pokemons;
 
-	state.CurrentMenu = GameMenu_AttackSelection;
+	state.CurrentMenu = GameMenu_PokemonSelection1;
 	state.MenuItem = 0;
-
-	auto uiElements = LoadUi();
+	state.maxMenuItem = pokemons.size();
 
 	auto quit = false;
 	while (!quit)
@@ -75,11 +67,11 @@ int main(int argc, char* argv[])
 					if (state.MenuItem > 0)
 						state.MenuItem--;
 					else
-						state.MenuItem = 1;
+						state.MenuItem = state.maxMenuItem - 1;
 					break;
 
 				case SDLK_DOWN:
-					if (state.MenuItem < 1)
+					if (state.MenuItem < state.maxMenuItem - 1)
 						state.MenuItem++;
 					else
 						state.MenuItem = 0;
@@ -91,25 +83,35 @@ int main(int argc, char* argv[])
 						DamagePokemon(state);
 						state.FirstPlayer = !state.FirstPlayer;
 					}
+					else if (state.CurrentMenu == GameMenu_PokemonSelection1)
+					{
+						state.PlayerOne = &pokemons[state.MenuItem];
+						state.CurrentMenu = GameMenu_PokemonSelection2;
+					}
+					else if (state.CurrentMenu == GameMenu_PokemonSelection2)
+					{
+						state.PlayerTwo = &pokemons[state.MenuItem];
+						state.CurrentMenu = GameMenu_AttackSelection;
+						state.maxMenuItem = 2;
+						state.IsRunning = true;
+
+						state.PlayerOneHP = state.PlayerOne->HP;
+						state.PlayerTwoHP = state.PlayerTwo->HP;
+						state.PlayerOneEnergy = state.PlayerOne->Energy;
+						state.PlayerTwoEnergy = state.PlayerTwo->Energy;
+					}
 					break;
 				}
 			}
 			break;
-			}
-
-			for (auto ui : uiElements)
-			{
-				ui->HandleEvent(ev);
 			}
 		}
 
 		SDL_RenderClear(renderer);
 		DrawBackground(renderer, SCREEN_WIDTH, SCREEN_HEIGHT);
 
-		DrawUI(renderer, state, uiElements);
+		DrawUI(renderer, state);
 
-		state.PlayerOne->Draw(renderer, 64, 96, 192, 192, false);
-		state.PlayerTwo->Draw(renderer, 384, 96, 192, 192, true);
 
 		SDL_RenderPresent(renderer);
 	}

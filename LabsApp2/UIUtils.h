@@ -1,13 +1,9 @@
 #pragma once
 #include <SDL_render.h>
-#include <vector>
 
 #include "GameState.h"
-#include "UiElement.h"
 
-std::vector<UiElement*> LoadUi();
-
-void DrawUI(SDL_Renderer*& renderer, const GameState& state, std::vector<UiElement*>& ui);
+void DrawUI(SDL_Renderer*& renderer, const GameState& state);
 
 void DrawAttackSelect(SDL_Renderer*& renderer, const GameState& state, Pokemon* pokemon);
 

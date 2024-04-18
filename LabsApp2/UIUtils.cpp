@@ -4,37 +4,8 @@
 #include <vector>
 
 #include "GameState.h"
-#include "UiElement.h"
 
-std::vector<UiElement*> LoadUi()
-{
-	std::vector<UiElement*> ui;
-
-	//auto button = new UiElement();
-	//button->X = 256;
-	//button->Y = 192;
-	//button->W = 128;
-	//button->H = 64;
-	//button->B = 3;
-
-	//button->BackgroundColorHover = SDL_Color( 192, 255, 192, 0 );
-	//button->BackgroundColorInactive = SDL_Color( 0, 128, 128, 0 );
-	//button->BackgroundColorDefault = SDL_Color( 0, 0, 0, 0 );
-	//button->BorderColor = SDL_Color( 255, 255, 255, 0 );
-	//button->BackgroundColorPressed = SDL_Color( 64, 255, 64, 0 );
-	//button->TextColor = SDL_Color( 32, 32, 255, 0 );
-
-	//button->Text = "TestBtn";
-
-	//ui.push_back(button);
-
-
-
-
-	return ui;
-}
-
-void DrawUI(SDL_Renderer*& renderer, const GameState& state, std::vector<UiElement*>& ui)
+void DrawUI(SDL_Renderer*& renderer, const GameState& state)
 {
 	if (state.IsRunning)
 	{
@@ -49,10 +20,39 @@ void DrawUI(SDL_Renderer*& renderer, const GameState& state, std::vector<UiEleme
 			DrawAttackSelect(renderer, state, state.FirstPlayer ? state.PlayerOne : state.PlayerTwo);
 		}
 
-		for (auto element : ui)
+		state.PlayerOne->Draw(renderer, 64, 96, 192, 192, false);
+		state.PlayerTwo->Draw(renderer, 384, 96, 192, 192, true);
+	}
+	else
+	{
+		for (int i = 0; i < state.maxMenuItem; i++)
 		{
-			element->Draw(renderer);
+			int x = 64;
+			int y = 64 + i * 32;
+			int w = 256;
+			int h = 32;
+			auto color = state.MenuItem == i ? SDL_Color(32, 32, 255, 0) : SDL_Color(96, 96, 192, 0);
+			DrawTextCentered(renderer, state.AllPokemons->at(i).Name, x, y, w, h, color);
+
+			state.AllPokemons->at(i).Draw(renderer, 24, y, 32, 32, false);
 		}
+
+		int x = 0;
+		int y = 0;
+		int w = 640;
+		int h = 32;
+		auto color = SDL_Color(255, 255, 255, 0);
+		if (state.CurrentMenu == GameMenu_PokemonSelection1)
+		{
+			std::string str = "Player 1, choose your Pokemon";
+			DrawTextCentered(renderer, str, x, y, w, h, color);
+		}
+		else if (state.CurrentMenu == GameMenu_PokemonSelection2)
+		{
+			std::string str = "Player 2, choose your Pokemon";
+			DrawTextCentered(renderer, str, x, y, w, h, color);
+		}
+		
 	}
 }
 

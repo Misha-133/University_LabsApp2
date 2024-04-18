@@ -55,17 +55,17 @@ void DamagePokemon(GameState& state)
 		}
 		else
 		{
-			if (state.PlayerTwoEnergy >= state.PlayerTwo->AttackOneEnergy)
+			if (state.PlayerTwoEnergy >= state.PlayerTwo->AttackTwoEnergy)
 			{
-				if (state.PlayerOneHP >= state.PlayerTwo->AttackOneDamage)
+				if (state.PlayerOneHP >= state.PlayerTwo->AttackTwoDamage)
 				{
-					state.PlayerOneHP -= state.PlayerTwo->AttackOneDamage;
+					state.PlayerOneHP -= state.PlayerTwo->AttackTwoDamage;
 				}
 				else
 				{
 					state.PlayerOneHP = 0;
 				}
-				state.PlayerTwoEnergy -= state.PlayerTwo->AttackOneEnergy;
+				state.PlayerTwoEnergy -= state.PlayerTwo->AttackTwoEnergy;
 			}
 		}
 	}

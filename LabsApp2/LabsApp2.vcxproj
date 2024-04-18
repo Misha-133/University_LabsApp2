@@ -134,7 +134,6 @@
     <ClCompile Include="LabsApp2.cpp" />
     <ClCompile Include="LoaderTools.cpp" />
     <ClCompile Include="Pokemon.cpp" />
-    <ClCompile Include="UiElement.cpp" />
     <ClCompile Include="UIUtils.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -145,7 +144,6 @@
     <ClInclude Include="GameState.h" />
     <ClInclude Include="LoaderTools.h" />
     <ClInclude Include="Pokemon.h" />
-    <ClInclude Include="UiElement.h" />
     <ClInclude Include="UIUtils.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

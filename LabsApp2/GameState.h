@@ -1,4 +1,6 @@
 ﻿#pragma once
+#include <vector>
+
 #include "Pokemon.h"
 
 struct GameState
@@ -9,6 +11,7 @@ struct GameState
 
 	GameMenu CurrentMenu;
 	int MenuItem;
+	int maxMenuItem;
 
 	unsigned int PlayerOneHP;
 	unsigned int PlayerTwoHP;
@@ -18,4 +21,6 @@ struct GameState
 
 	Pokemon* PlayerOne;
 	Pokemon* PlayerTwo;
+
+	std::vector<Pokemon>* AllPokemons;
 };
