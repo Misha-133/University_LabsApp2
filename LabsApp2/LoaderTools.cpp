@@ -41,6 +41,8 @@ std::vector<Pokemon> LoadPokemons(const std::string& path, SDL_Renderer*& render
             file >> pokemon.HP;
             file >> pokemon.Energy;
             file >> pokemon.Weakness;
+            file >> pokemon.Speed;
+            file >> pokemon.AttackCount;
 
             file.clear();
             file.ignore(9999, '\n');

@@ -8,6 +8,7 @@ struct GameState
 	bool IsRunning;
 	bool FirstPlayer;
 	bool WaitingForInput;
+	bool GameOver;
 
 	GameMenu CurrentMenu;
 	int MenuItem;

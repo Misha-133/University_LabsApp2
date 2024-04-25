@@ -3,6 +3,7 @@
 #include <SDL.h>
 #include <fstream>
 #include <SDL_ttf.h>
+#include <SDL_mixer.h>
 
 #include "GameLogic.h"
 #include "LoaderTools.h"
@@ -16,11 +17,15 @@ int main(int argc, char* argv[])
 {
 	std::cout << "Starting...\n";
 
-	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0 ||
-		TTF_Init() != 0)
-	{
+	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0 || TTF_Init() != 0)
 		return 1;
-	}
+
+	if (SDL_Init(SDL_INIT_AUDIO) != 0) 
+		return 1;
+
+	Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048);
+	Mix_Music* bgm = Mix_LoadMUS("data/music/music1.mp3");
+	Mix_PlayMusic(bgm, 999);
 
 	std::cout << "Initializing display...\n";
 	SDL_Window* window = SDL_CreateWindow("Pokokek", SDL_WINDOWPOS_UNDEFINED,
@@ -78,10 +83,24 @@ int main(int argc, char* argv[])
 					break;
 				case SDLK_KP_ENTER:
 				case SDLK_RETURN:
-					if (state.CurrentMenu == GameMenu_AttackSelection)
+					if (state.CurrentMenu == GameMenu_AttackSelection && !state.GameOver)
 					{
 						DamagePokemon(state);
+						if (state.FirstPlayer)
+						{
+							state.PlayerTwoEnergy += rand() % 20;
+							if (state.PlayerTwoEnergy > state.PlayerTwo->Energy)
+								state.PlayerTwoEnergy = state.PlayerTwo->Energy;
+						}
+						else
+						{
+							state.PlayerOneEnergy += rand() % 20;
+							if (state.PlayerOneEnergy > state.PlayerOne->Energy)
+								state.PlayerOneEnergy = state.PlayerOne->Energy;
+						}
+
 						state.FirstPlayer = !state.FirstPlayer;
+						state.MenuItem = 0;
 					}
 					else if (state.CurrentMenu == GameMenu_PokemonSelection1)
 					{
@@ -93,12 +112,18 @@ int main(int argc, char* argv[])
 						state.PlayerTwo = &pokemons[state.MenuItem];
 						state.CurrentMenu = GameMenu_AttackSelection;
 						state.maxMenuItem = 2;
-						state.IsRunning = true;
 
 						state.PlayerOneHP = state.PlayerOne->HP;
 						state.PlayerTwoHP = state.PlayerTwo->HP;
 						state.PlayerOneEnergy = state.PlayerOne->Energy;
 						state.PlayerTwoEnergy = state.PlayerTwo->Energy;
+
+						if (state.PlayerOne->Speed > state.PlayerTwo->Speed)
+							state.FirstPlayer = true;
+						else
+							state.FirstPlayer = false;
+
+						state.IsRunning = true;
 					}
 					break;
 				}
@@ -107,11 +132,13 @@ int main(int argc, char* argv[])
 			}
 		}
 
+		if (state.IsRunning && (state.PlayerOneHP == 0 || state.PlayerTwoHP == 0))
+			state.GameOver = true;
+
 		SDL_RenderClear(renderer);
 		DrawBackground(renderer, SCREEN_WIDTH, SCREEN_HEIGHT);
 
 		DrawUI(renderer, state);
-
 
 		SDL_RenderPresent(renderer);
 	}
@@ -121,6 +148,8 @@ int main(int argc, char* argv[])
 		pok.Destroy();
 	}
 	SDL_DestroyWindow(window);
+	Mix_FreeMusic(bgm);
+	Mix_CloseAudio();
 
 	SDL_Quit();
 }

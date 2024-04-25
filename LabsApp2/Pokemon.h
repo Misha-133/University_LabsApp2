@@ -12,6 +12,8 @@ struct Pokemon
 	int HP;
 	int Energy;
 	int Weakness;
+	int Speed;
+	int AttackCount;
 
 	std::string AttackOneName;
 	unsigned int AttackOneDamage;

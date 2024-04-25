@@ -15,13 +15,24 @@ void DrawUI(SDL_Renderer*& renderer, const GameState& state)
 		DrawEnergyBar(renderer, 0, 40, 192, 32, state.PlayerOneEnergy, state.PlayerOne->Energy);
 		DrawEnergyBar(renderer, 448, 40, 192, 32, state.PlayerTwoEnergy, state.PlayerTwo->Energy);
 
-		if (state.CurrentMenu == GameMenu_AttackSelection)
+		if (state.CurrentMenu == GameMenu_AttackSelection && !state.GameOver)
 		{
 			DrawAttackSelect(renderer, state, state.FirstPlayer ? state.PlayerOne : state.PlayerTwo);
 		}
 
 		state.PlayerOne->Draw(renderer, 64, 96, 192, 192, false);
 		state.PlayerTwo->Draw(renderer, 384, 96, 192, 192, true);
+
+		if (state.GameOver)
+		{
+			auto x = 0;
+			auto y = 0;
+			auto w = 640;
+			auto h = 32;
+			auto color = SDL_Color(255, 255, 255, 0);
+			std::string str = state.PlayerOneHP == 0 ? "Player 2 wins!" : "Player 1 wins!";
+			DrawTextCentered(renderer, str, x, y, w, h, color);
+		}
 	}
 	else
 	{
