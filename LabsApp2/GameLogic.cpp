@@ -5,68 +5,32 @@ void DamagePokemon(GameState& state)
 {
 	if (state.FirstPlayer)
 	{
-		if (state.MenuItem == 0)
+		if (state.PlayerOneEnergy >= state.PlayerOne->Attacks[state.MenuItem].EnergyCost)
 		{
-			if (state.PlayerOneEnergy >= state.PlayerOne->AttackOneEnergy)
+			if (state.PlayerTwoHP >= state.PlayerOne->Attacks[state.MenuItem].Damage)
 			{
-				if (state.PlayerTwoHP >= state.PlayerOne->AttackOneDamage)
-				{
-					state.PlayerTwoHP -= state.PlayerOne->AttackOneDamage;
-				}
-				else
-				{
-					state.PlayerTwoHP = 0;
-				}
-				state.PlayerOneEnergy -= state.PlayerOne->AttackOneEnergy;
+				state.PlayerTwoHP -= state.PlayerOne->Attacks[state.MenuItem].Damage;
 			}
-		}
-		else
-		{
-			if (state.PlayerOneEnergy >= state.PlayerOne->AttackTwoEnergy)
+			else
 			{
-				if (state.PlayerTwoHP >= state.PlayerOne->AttackTwoDamage)
-				{
-					state.PlayerTwoHP -= state.PlayerOne->AttackTwoDamage;
-				}
-				else
-				{
-					state.PlayerTwoHP = 0;
-				}
-				state.PlayerOneEnergy -= state.PlayerOne->AttackTwoEnergy;
+				state.PlayerTwoHP = 0;
 			}
+			state.PlayerOneEnergy -= state.PlayerOne->Attacks[state.MenuItem].EnergyCost;
 		}
 	}
 	else
 	{
-		if (state.MenuItem == 0)
+		if (state.PlayerTwoEnergy >= state.PlayerTwo->Attacks[state.MenuItem].EnergyCost)
 		{
-			if (state.PlayerTwoEnergy >= state.PlayerTwo->AttackOneEnergy)
+			if (state.PlayerOneHP >= state.PlayerTwo->Attacks[state.MenuItem].Damage)
 			{
-				if (state.PlayerOneHP >= state.PlayerTwo->AttackOneDamage)
-				{
-					state.PlayerOneHP -= state.PlayerTwo->AttackOneDamage;
-				}
-				else
-				{
-					state.PlayerOneHP = 0;
-				}
-				state.PlayerTwoEnergy -= state.PlayerTwo->AttackOneEnergy;
+				state.PlayerOneHP -= state.PlayerTwo->Attacks[state.MenuItem].Damage;
 			}
-		}
-		else
-		{
-			if (state.PlayerTwoEnergy >= state.PlayerTwo->AttackTwoEnergy)
+			else
 			{
-				if (state.PlayerOneHP >= state.PlayerTwo->AttackTwoDamage)
-				{
-					state.PlayerOneHP -= state.PlayerTwo->AttackTwoDamage;
-				}
-				else
-				{
-					state.PlayerOneHP = 0;
-				}
-				state.PlayerTwoEnergy -= state.PlayerTwo->AttackTwoEnergy;
+				state.PlayerOneHP = 0;
 			}
+			state.PlayerTwoEnergy -= state.PlayerTwo->Attacks[state.MenuItem].EnergyCost;
 		}
 	}
 }

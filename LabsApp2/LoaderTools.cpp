@@ -44,20 +44,19 @@ std::vector<Pokemon> LoadPokemons(const std::string& path, SDL_Renderer*& render
             file >> pokemon.Speed;
             file >> pokemon.AttackCount;
 
-            file.clear();
-            file.ignore(9999, '\n');
-            std::getline(file, pokemon.AttackOneName, '\n');
+            for (int i = 0; i < pokemon.AttackCount; i++)
+            {
+	            auto attack = Attack();
+                file.clear();
+                file.ignore(9999, '\n');
+                				std::getline(file, attack.Name, '\n');
 
-            file >> pokemon.AttackOneType;
-            file >> pokemon.AttackOneDamage;
-            file >> pokemon.AttackOneEnergy;
+                file >> attack.Type;
+                file >> attack.Damage;
+                file >> attack.EnergyCost;
 
-            file.clear();
-            file.ignore(9999, '\n');
-            std::getline(file, pokemon.AttackTwoName, '\n');
-            file >> pokemon.AttackTwoType;
-            file >> pokemon.AttackTwoDamage;
-            file >> pokemon.AttackTwoEnergy;
+                pokemon.Attacks.push_back(attack);
+            }
 
             file.close();
 

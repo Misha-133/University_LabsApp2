@@ -140,6 +140,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Attack.h" />
     <ClInclude Include="GameLogic.h" />
     <ClInclude Include="GameState.h" />
     <ClInclude Include="LoaderTools.h" />

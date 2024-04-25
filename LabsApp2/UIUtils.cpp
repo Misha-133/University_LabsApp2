@@ -69,12 +69,13 @@ void DrawUI(SDL_Renderer*& renderer, const GameState& state)
 
 void DrawAttackSelect(SDL_Renderer*& renderer, const GameState& state, Pokemon* pokemon)
 {
+	auto attackCount = state.FirstPlayer ? state.PlayerOne->AttackCount : state.PlayerTwo->AttackCount;
+
 	auto x = 32;
 	auto y = 384;
 	auto w = 576;
-	auto h = 64;
-	auto h1 = h / 2;
-	auto y2 = y + h1;
+	auto h = 32 * attackCount;
+	auto h1 = (int)h / 2;
 
 	auto border = 2;
 
@@ -87,13 +88,13 @@ void DrawAttackSelect(SDL_Renderer*& renderer, const GameState& state, Pokemon* 
 	SDL_RenderFillRect(renderer, &rect);
 
 	SDL_Color color;
-	color = state.MenuItem == 0 ? SDL_Color(32, 32, 255, 0) : SDL_Color(96, 96, 192, 0);
-	auto str = pokemon->AttackOneName + "     D: " + std::to_string(pokemon->AttackOneDamage) + "     E: " + std::to_string(pokemon->AttackOneEnergy);
-	DrawTextCentered(renderer, str, x, y, w, h1, color);
-
-	color = state.MenuItem == 1 ? SDL_Color(32, 32, 255, 0) : SDL_Color(96, 96, 192, 0);
-	str = pokemon->AttackTwoName + "     D: " + std::to_string(pokemon->AttackTwoDamage) + "     E: " + std::to_string(pokemon->AttackTwoEnergy);
-	DrawTextCentered(renderer, str, x, y2, w, h1, color);
+	for (int i = 0; i < attackCount; i++) 
+	{
+		int y1 = y + i * 32;
+		color = state.MenuItem == i ? SDL_Color(32, 32, 255, 0) : SDL_Color(96, 96, 192, 0);
+		auto str = pokemon->Attacks[i].Name + "     D: " + std::to_string(pokemon->Attacks[i].Damage) + "     E: " + std::to_string(pokemon->Attacks[i].EnergyCost);
+		DrawTextCentered(renderer, str, x, y1, w, h1, color);
+	}
 }
 
 void DrawHealthBar(SDL_Renderer*& renderer, int x, int y, int w, int h, unsigned int value, unsigned int total)

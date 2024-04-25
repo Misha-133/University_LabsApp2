@@ -1,29 +1,23 @@
 ﻿#pragma once
 #include <SDL_render.h>
 #include <string>
+#include <vector>
 
-#include "Enums.h"
+#include "Attack.h"
+
 
 struct Pokemon
 {
 	int Id;
 	std::string Name;
 
-	int HP;
-	int Energy;
-	int Weakness;
-	int Speed;
-	int AttackCount;
+	unsigned int HP;
+	unsigned int Energy;
+	unsigned int Weakness;
+	unsigned int Speed;
+	unsigned int AttackCount;
 
-	std::string AttackOneName;
-	unsigned int AttackOneDamage;
-	unsigned int AttackOneEnergy;
-	int AttackOneType;
-
-	std::string AttackTwoName;
-	unsigned int AttackTwoDamage;
-	unsigned int AttackTwoEnergy;
-	int AttackTwoType;
+	std::vector<Attack> Attacks;
 
 	SDL_Texture *Texture;
 

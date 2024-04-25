@@ -5,6 +5,7 @@
 #include <SDL_ttf.h>
 #include <SDL_mixer.h>
 
+#include "Enums.h"
 #include "GameLogic.h"
 #include "LoaderTools.h"
 #include "GameState.h"
@@ -111,7 +112,7 @@ int main(int argc, char* argv[])
 					{
 						state.PlayerTwo = &pokemons[state.MenuItem];
 						state.CurrentMenu = GameMenu_AttackSelection;
-						state.maxMenuItem = 2;
+						state.maxMenuItem = state.FirstPlayer ? state.PlayerOne->AttackCount : state.PlayerTwo->AttackCount;
 
 						state.PlayerOneHP = state.PlayerOne->HP;
 						state.PlayerTwoHP = state.PlayerTwo->HP;
