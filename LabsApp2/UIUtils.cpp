@@ -10,7 +10,7 @@ void DrawUI(SDL_Renderer*& renderer, GameState& state)
 	if (state.IsRunning)
 	{
 		DrawHealthBar(renderer, 0, 0, 192, 32, state.Players[0].HP, state.Players[0].MaxHP);
-		DrawHealthBar(renderer, 448, 0, 192, 32, state.Players[1].HP, state.Players[1].HP);
+		DrawHealthBar(renderer, 448, 0, 192, 32, state.Players[1].HP, state.Players[1].MaxHP);
 
 		DrawEnergyBar(renderer, 0, 40, 192, 32, state.Players[0].Energy, state.Players[0].MaxEnergy);
 		DrawEnergyBar(renderer, 448, 40, 192, 32, state.Players[1].Energy, state.Players[1].MaxEnergy);
@@ -111,8 +111,6 @@ void DrawHealthBar(SDL_Renderer*& renderer, int x, int y, int w, int h, unsigned
 
 	float percent = (value / (float)total);
 	int width = percent * (w - 4);
-	if (width < 0)
-		width = 0;
 
 	rect = SDL_Rect(x + 2, y + 2, width, h - 4);
 	SDL_SetRenderDrawColor(renderer, 228 * (1 - percent), 16 + 228 * percent, 32, 0);
