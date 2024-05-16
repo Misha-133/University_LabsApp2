@@ -1,36 +1,43 @@
 ﻿#include "GameState.h"
 #include "GameLogic.h"
 
-void DamagePokemon(GameState& state)
+double damage_map[5][5] = {
+{ 1.0, 1.0, 1.0, 1.5, 0.5 },
+{ 1.0, 0.5, 1.0, 1.0, 1.5 },
+{ 1.0, 1.0, 1.0, 1.5, 1.0 },
+{ 1.5, 1.0, 1.5, 1.0, 1.0 },
+{ 0.5, 1.5, 1.0, 1.0, 1.0 },
+};
+
+unsigned int get_damage(PokemonType t1, PokemonType t2, unsigned int damage)
 {
-	if (state.FirstPlayer)
+	for (int i = 0; i < 5; i++)
 	{
-		if (state.PlayerOneEnergy >= state.PlayerOne->Attacks[state.MenuItem].EnergyCost)
+		if (t1 | (1 << i))
 		{
-			if (state.PlayerTwoHP >= state.PlayerOne->Attacks[state.MenuItem].Damage)
+			for (int j = 0; j < 5; j++)
 			{
-				state.PlayerTwoHP -= state.PlayerOne->Attacks[state.MenuItem].Damage;
+				if (t2 | (1 << j))
+				{
+					damage *= damage_map[i][j];
+				}
 			}
-			else
-			{
-				state.PlayerTwoHP = 0;
-			}
-			state.PlayerOneEnergy -= state.PlayerOne->Attacks[state.MenuItem].EnergyCost;
 		}
 	}
-	else
-	{
-		if (state.PlayerTwoEnergy >= state.PlayerTwo->Attacks[state.MenuItem].EnergyCost)
-		{
-			if (state.PlayerOneHP >= state.PlayerTwo->Attacks[state.MenuItem].Damage)
-			{
-				state.PlayerOneHP -= state.PlayerTwo->Attacks[state.MenuItem].Damage;
-			}
-			else
-			{
-				state.PlayerOneHP = 0;
-			}
-			state.PlayerTwoEnergy -= state.PlayerTwo->Attacks[state.MenuItem].EnergyCost;
-		}
-	}
+	return damage;
+}
+
+bool DamagePokemon(Pokemon& attacker, Pokemon& victim, int attack)
+{
+	if (attacker.Energy < attacker.Attacks[attack].EnergyCost)
+		return false;
+
+	unsigned int dmg = get_damage(attacker.Type, victim.Type, attacker.Attacks[attack].Damage);
+
+	victim.HP -= dmg;
+	if (victim.HP > victim.MaxHP)
+		victim.HP = 0;
+	attacker.Energy -= attacker.Attacks[attack].EnergyCost;
+
+	return true;
 }

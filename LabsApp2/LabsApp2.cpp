@@ -21,7 +21,7 @@ int main(int argc, char* argv[])
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0 || TTF_Init() != 0)
 		return 1;
 
-	if (SDL_Init(SDL_INIT_AUDIO) != 0) 
+	if (SDL_Init(SDL_INIT_AUDIO) != 0)
 		return 1;
 
 	Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048);
@@ -86,43 +86,38 @@ int main(int argc, char* argv[])
 				case SDLK_RETURN:
 					if (state.CurrentMenu == GameMenu_AttackSelection && !state.GameOver)
 					{
-						DamagePokemon(state);
-						if (state.FirstPlayer)
-						{
-							state.PlayerTwoEnergy += rand() % 20;
-							if (state.PlayerTwoEnergy > state.PlayerTwo->Energy)
-								state.PlayerTwoEnergy = state.PlayerTwo->Energy;
-						}
-						else
-						{
-							state.PlayerOneEnergy += rand() % 20;
-							if (state.PlayerOneEnergy > state.PlayerOne->Energy)
-								state.PlayerOneEnergy = state.PlayerOne->Energy;
-						}
+						DamagePokemon(state.Players[state.Player], state.Players[PLAYER_COUNT - state.Player - 1], state.MenuItem);
 
-						state.FirstPlayer = !state.FirstPlayer;
+						state.Players[PLAYER_COUNT - state.Player - 1].Energy += rand() % 20;
+						if (state.Players[PLAYER_COUNT - state.Player - 1].Energy > state.Players[PLAYER_COUNT - state.Player - 1].MaxEnergy)
+							state.Players[PLAYER_COUNT - state.Player - 1].Energy = state.Players[PLAYER_COUNT - state.Player - 1].MaxEnergy;
+
+						state.Player++;
+						state.Player %= 2;
 						state.MenuItem = 0;
+						state.maxMenuItem = state.Players[state.Player].AttackCount;
 					}
 					else if (state.CurrentMenu == GameMenu_PokemonSelection1)
 					{
-						state.PlayerOne = &pokemons[state.MenuItem];
+						state.Players[0] = pokemons[state.MenuItem];
 						state.CurrentMenu = GameMenu_PokemonSelection2;
 					}
 					else if (state.CurrentMenu == GameMenu_PokemonSelection2)
 					{
-						state.PlayerTwo = &pokemons[state.MenuItem];
+						state.Players[1] = pokemons[state.MenuItem];
 						state.CurrentMenu = GameMenu_AttackSelection;
-						state.maxMenuItem = state.FirstPlayer ? state.PlayerOne->AttackCount : state.PlayerTwo->AttackCount;
 
-						state.PlayerOneHP = state.PlayerOne->HP;
-						state.PlayerTwoHP = state.PlayerTwo->HP;
-						state.PlayerOneEnergy = state.PlayerOne->Energy;
-						state.PlayerTwoEnergy = state.PlayerTwo->Energy;
+						unsigned int maxSpeed = state.Players[0].Speed;
+						int maxSpeedIndex = 0;
+						for (int i = 1; i < PLAYER_COUNT; i++)
+							if (state.Players[i].Speed > maxSpeed)
+								{
+								maxSpeed = state.Players[i].Speed;
+								maxSpeedIndex = i;
+							}
 
-						if (state.PlayerOne->Speed > state.PlayerTwo->Speed)
-							state.FirstPlayer = true;
-						else
-							state.FirstPlayer = false;
+						state.Player = maxSpeedIndex;
+						state.maxMenuItem = state.Players[state.Player].AttackCount;
 
 						state.IsRunning = true;
 					}
@@ -133,8 +128,14 @@ int main(int argc, char* argv[])
 			}
 		}
 
-		if (state.IsRunning && (state.PlayerOneHP == 0 || state.PlayerTwoHP == 0))
-			state.GameOver = true;
+		if (state.IsRunning)
+		{
+			for (int i = 0; i < PLAYER_COUNT; i++)
+			{
+				if (!state.Players[i].HP)
+					state.GameOver = true;
+			}
+		}
 
 		SDL_RenderClear(renderer);
 		DrawBackground(renderer, SCREEN_WIDTH, SCREEN_HEIGHT);

@@ -5,23 +5,23 @@
 
 #include "GameState.h"
 
-void DrawUI(SDL_Renderer*& renderer, const GameState& state)
+void DrawUI(SDL_Renderer*& renderer, GameState& state)
 {
 	if (state.IsRunning)
 	{
-		DrawHealthBar(renderer, 0, 0, 192, 32, state.PlayerOneHP, state.PlayerOne->HP);
-		DrawHealthBar(renderer, 448, 0, 192, 32, state.PlayerTwoHP, state.PlayerTwo->HP);
+		DrawHealthBar(renderer, 0, 0, 192, 32, state.Players[0].HP, state.Players[0].MaxHP);
+		DrawHealthBar(renderer, 448, 0, 192, 32, state.Players[1].HP, state.Players[1].HP);
 
-		DrawEnergyBar(renderer, 0, 40, 192, 32, state.PlayerOneEnergy, state.PlayerOne->Energy);
-		DrawEnergyBar(renderer, 448, 40, 192, 32, state.PlayerTwoEnergy, state.PlayerTwo->Energy);
+		DrawEnergyBar(renderer, 0, 40, 192, 32, state.Players[0].Energy, state.Players[0].MaxEnergy);
+		DrawEnergyBar(renderer, 448, 40, 192, 32, state.Players[1].Energy, state.Players[1].MaxEnergy);
 
 		if (state.CurrentMenu == GameMenu_AttackSelection && !state.GameOver)
 		{
-			DrawAttackSelect(renderer, state, state.FirstPlayer ? state.PlayerOne : state.PlayerTwo);
+			DrawAttackSelect(renderer, state, &state.Players[state.Player]);
 		}
 
-		state.PlayerOne->Draw(renderer, 64, 96, 192, 192, false);
-		state.PlayerTwo->Draw(renderer, 384, 96, 192, 192, true);
+		state.Players[0].Draw(renderer, 64, 96, 192, 192, false);
+		state.Players[1].Draw(renderer, 384, 96, 192, 192, true);
 
 		if (state.GameOver)
 		{
@@ -30,7 +30,7 @@ void DrawUI(SDL_Renderer*& renderer, const GameState& state)
 			auto w = 640;
 			auto h = 32;
 			auto color = SDL_Color(255, 255, 255, 0);
-			std::string str = state.PlayerOneHP == 0 ? "Player 2 wins!" : "Player 1 wins!";
+			std::string str = state.Players[0].HP == 0 ? "Player 2 wins!" : "Player 1 wins!";
 			DrawTextCentered(renderer, str, x, y, w, h, color);
 		}
 	}
@@ -44,6 +44,12 @@ void DrawUI(SDL_Renderer*& renderer, const GameState& state)
 			int h = 32;
 			auto color = state.MenuItem == i ? SDL_Color(32, 32, 255, 0) : SDL_Color(96, 96, 192, 0);
 			DrawTextCentered(renderer, state.AllPokemons->at(i).Name, x, y, w, h, color);
+			if (state.MenuItem == i)
+			{
+				auto r = SDL_Rect(x, y, w, h);
+				SDL_SetRenderDrawColor(renderer, 64, 64, 96, 0);
+				SDL_RenderDrawRect(renderer, &r);
+			}
 
 			state.AllPokemons->at(i).Draw(renderer, 24, y, 32, 32, false);
 		}
@@ -67,15 +73,15 @@ void DrawUI(SDL_Renderer*& renderer, const GameState& state)
 	}
 }
 
-void DrawAttackSelect(SDL_Renderer*& renderer, const GameState& state, Pokemon* pokemon)
+void DrawAttackSelect(SDL_Renderer*& renderer, GameState& state, Pokemon* pokemon)
 {
-	auto attackCount = state.FirstPlayer ? state.PlayerOne->AttackCount : state.PlayerTwo->AttackCount;
+	auto attackCount = state.Players[state.Player].AttackCount;
 
 	auto x = 32;
 	auto y = 384;
 	auto w = 576;
 	auto h = 32 * attackCount;
-	auto h1 = (int)h / 2;
+	int h1 = (int)h / attackCount;
 
 	auto border = 2;
 

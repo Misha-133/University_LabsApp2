@@ -4,10 +4,12 @@
 #include "Enums.h"
 #include "Pokemon.h"
 
+#define PLAYER_COUNT 2
+
 struct GameState
 {
 	bool IsRunning;
-	bool FirstPlayer;
+	int Player;
 	bool WaitingForInput;
 	bool GameOver;
 
@@ -15,14 +17,7 @@ struct GameState
 	int MenuItem;
 	unsigned int maxMenuItem;
 
-	unsigned int PlayerOneHP;
-	unsigned int PlayerTwoHP;
-
-	unsigned int PlayerOneEnergy;
-	unsigned int PlayerTwoEnergy;
-
-	Pokemon* PlayerOne;
-	Pokemon* PlayerTwo;
+	Pokemon Players[PLAYER_COUNT];
 
 	std::vector<Pokemon>* AllPokemons;
 };

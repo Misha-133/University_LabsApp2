@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "Attack.h"
+#include "Enums.h"
 
 
 struct Pokemon
@@ -12,10 +13,13 @@ struct Pokemon
 	std::string Name;
 
 	unsigned int HP;
+	unsigned int MaxHP;
 	unsigned int Energy;
+	unsigned int MaxEnergy;
 	unsigned int Weakness;
 	unsigned int Speed;
 	unsigned int AttackCount;
+	PokemonType Type;
 
 	std::vector<Attack> Attacks;
 

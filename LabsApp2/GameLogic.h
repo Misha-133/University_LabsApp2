@@ -1,4 +1,5 @@
 ﻿#pragma once
 #include "GameState.h"
 
-void DamagePokemon(GameState& state);
+
+bool DamagePokemon(Pokemon& attacker, Pokemon& victim, int attack);

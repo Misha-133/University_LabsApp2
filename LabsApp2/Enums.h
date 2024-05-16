@@ -1,13 +1,12 @@
 ﻿#pragma once
 
-enum DamageType
+enum PokemonType
 {
-	DamageType_Fire = 0b1,
-	DamageType_Ice = 0b10,
-	DamageType_Lightning = 0b100,
-	DamageType_Poison = 0b1000,
-	DamageType_Physical = 0b10000,
-	DamageType_Magic = 0b100000
+	DamageType_Fire = 1 << 0,
+	DamageType_Poison = 1 << 1,
+	DamageType_Magic = 1 << 2,
+	DamageType_Grass = 1 << 3,
+	DamageType_Water = 1 << 4,
 };
 
 enum GameMenu
