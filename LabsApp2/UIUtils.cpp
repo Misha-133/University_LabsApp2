@@ -109,8 +109,10 @@ void DrawHealthBar(SDL_Renderer*& renderer, int x, int y, int w, int h, unsigned
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 0);
 	SDL_RenderFillRect(renderer, &rect);
 
-	const float percent = (value / (float)total);
-	const int width = percent * (w - 4);
+	float percent = (value / (float)total);
+	int width = percent * (w - 4);
+	if (width < 0)
+		width = 0;
 
 	rect = SDL_Rect(x + 2, y + 2, width, h - 4);
 	SDL_SetRenderDrawColor(renderer, 228 * (1 - percent), 16 + 228 * percent, 32, 0);
