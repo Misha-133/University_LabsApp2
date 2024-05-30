@@ -1,5 +1,4 @@
 ﻿#pragma once
 #include "GameState.h"
 
-
-bool DamagePokemon(Pokemon& attacker, Pokemon& victim, int attack);
+bool DamagePlayer(Pokemon& attacker, std::vector<Pokemon>& victim, int attack);

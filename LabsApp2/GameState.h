@@ -17,7 +17,8 @@ struct GameState
 	int MenuItem;
 	unsigned int maxMenuItem;
 
-	Pokemon Players[PLAYER_COUNT];
+	std::vector<Pokemon> Players[PLAYER_COUNT];
+	int CurrentPokemon[PLAYER_COUNT] = {};
 
 	std::vector<Pokemon>* AllPokemons;
 };

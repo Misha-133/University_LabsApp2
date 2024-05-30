@@ -15,4 +15,5 @@ enum GameMenu
 	GameMenu_AttackSelection = 1,
 	GameMenu_PokemonSelection1 = 2,
 	GameMenu_PokemonSelection2 = 3,
+	GameMenu_Starting = 4,
 };

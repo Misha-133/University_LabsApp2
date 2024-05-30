@@ -55,103 +55,137 @@ int main(int argc, char* argv[])
 	state.MenuItem = 0;
 	state.maxMenuItem = pokemons.size();
 
-	auto quit = false;
-	while (!quit)
-	{
-		frameCounter++;
-		SDL_Event ev;
-		while (SDL_PollEvent(&ev))
+	try {
+		auto quit = false;
+		while (!quit)
 		{
-			switch (ev.type)
+			frameCounter++;
+			SDL_Event ev;
+			while (SDL_PollEvent(&ev))
 			{
-			case SDL_QUIT: quit = true; break;
-			case SDL_KEYDOWN:
-			{
-				switch (ev.key.keysym.sym)
+				switch (ev.type)
 				{
-				case SDLK_UP:
-					if (state.MenuItem > 0)
-						state.MenuItem--;
-					else
-						state.MenuItem = state.maxMenuItem - 1;
-					break;
-
-				case SDLK_DOWN:
-					if (state.MenuItem < state.maxMenuItem - 1)
-						state.MenuItem++;
-					else
-						state.MenuItem = 0;
-					break;
-				case SDLK_KP_ENTER:
-				case SDLK_RETURN:
-					if (state.CurrentMenu == GameMenu_AttackSelection && !state.GameOver)
+				case SDL_QUIT: quit = true; break;
+				case SDL_KEYDOWN:
+				{
+					switch (ev.key.keysym.sym)
 					{
-						DamagePokemon(state.Players[state.Player], state.Players[PLAYER_COUNT - state.Player - 1], state.MenuItem);
+					case SDLK_UP:
+						if (state.MenuItem > 0)
+							state.MenuItem--;
+						else
+							state.MenuItem = state.maxMenuItem - 1;
+						break;
 
-						state.Players[PLAYER_COUNT - state.Player - 1].Energy += rand() % 20;
-						if (state.Players[PLAYER_COUNT - state.Player - 1].Energy > state.Players[PLAYER_COUNT - state.Player - 1].MaxEnergy)
-							state.Players[PLAYER_COUNT - state.Player - 1].Energy = state.Players[PLAYER_COUNT - state.Player - 1].MaxEnergy;
+					case SDLK_DOWN:
+						if (state.MenuItem < state.maxMenuItem - 1)
+							state.MenuItem++;
+						else
+							state.MenuItem = 0;
+						break;
+					case SDLK_KP_ENTER:
+					case SDLK_RETURN:
+						if (state.CurrentMenu == GameMenu_AttackSelection && !state.GameOver)
+						{
+							DamagePlayer(state.Players[state.Player].at(state.CurrentPokemon[state.Player]), state.Players[PLAYER_COUNT - state.Player - 1], state.MenuItem);
 
-						state.Player++;
-						state.Player %= 2;
-						state.MenuItem = 0;
-						state.maxMenuItem = state.Players[state.Player].AttackCount;
+							state.Players[PLAYER_COUNT - state.Player - 1].at(state.CurrentPokemon[PLAYER_COUNT - state.Player - 1]).Energy += rand() % 20;
+							if (state.Players[PLAYER_COUNT - state.Player - 1].at(state.CurrentPokemon[PLAYER_COUNT - state.Player - 1]).Energy > state.Players[PLAYER_COUNT - state.Player - 1].at(state.CurrentPokemon[PLAYER_COUNT - state.Player - 1]).MaxEnergy)
+								state.Players[PLAYER_COUNT - state.Player - 1].at(state.CurrentPokemon[PLAYER_COUNT - state.Player - 1]).Energy = state.Players[PLAYER_COUNT - state.Player - 1].at(state.CurrentPokemon[PLAYER_COUNT - state.Player - 1]).MaxEnergy;
+
+							state.Player++;
+							state.Player %= PLAYER_COUNT;
+							state.MenuItem = 0;
+
+							if (state.Players[state.Player].at(1 - state.CurrentPokemon[state.Player]).HP != 0)
+								state.CurrentPokemon[state.Player]++;
+							state.CurrentPokemon[state.Player] %= state.Players[state.Player].size();
+
+							state.maxMenuItem = state.Players[state.Player].at(state.CurrentPokemon[state.Player]).AttackCount;
+						}
+						else if (state.CurrentMenu == GameMenu_PokemonSelection1)
+						{
+							state.Players[0].push_back(pokemons[state.MenuItem]);
+							state.MenuItem = 0;
+
+							if (state.Players[0].size() >= 2)
+								state.CurrentMenu = GameMenu_PokemonSelection2;
+						}
+						else if (state.CurrentMenu == GameMenu_PokemonSelection2)
+						{
+							state.Players[1].push_back(pokemons[state.MenuItem]);
+
+							state.MenuItem = 0;
+							if (state.Players[1].size() >= 2)
+								state.CurrentMenu = GameMenu_Starting;
+						}
+						break;
 					}
-					else if (state.CurrentMenu == GameMenu_PokemonSelection1)
-					{
-						state.Players[0] = pokemons[state.MenuItem];
-						state.CurrentMenu = GameMenu_PokemonSelection2;
-					}
-					else if (state.CurrentMenu == GameMenu_PokemonSelection2)
-					{
-						state.Players[1] = pokemons[state.MenuItem];
-						state.CurrentMenu = GameMenu_AttackSelection;
-
-						unsigned int maxSpeed = state.Players[0].Speed;
-						int maxSpeedIndex = 0;
-						for (int i = 1; i < PLAYER_COUNT; i++)
-							if (state.Players[i].Speed > maxSpeed)
-								{
-								maxSpeed = state.Players[i].Speed;
-								maxSpeedIndex = i;
-							}
-
-						state.Player = maxSpeedIndex;
-						state.maxMenuItem = state.Players[state.Player].AttackCount;
-
-						state.IsRunning = true;
-					}
-					break;
+				}
+				break;
 				}
 			}
-			break;
-			}
-		}
-
-		if (state.IsRunning)
-		{
-			for (int i = 0; i < PLAYER_COUNT; i++)
+			if (state.CurrentMenu == GameMenu_Starting)
 			{
-				if (!state.Players[i].HP)
-					state.GameOver = true;
+				unsigned int maxSpeed = state.Players[0].at(0).Speed;
+				int maxSpeedPlayer = 0;
+				int maxSpeedIndex = 0;
+				for (int i = 1; i < PLAYER_COUNT; i++)
+				{
+					int j = 0;
+					for (auto& p : state.Players[i])
+					{
+						if (p.Speed > maxSpeed)
+						{
+							maxSpeed = p.Speed;
+							maxSpeedIndex = j;
+							maxSpeedPlayer = i;
+						}
+						j++;
+					}
+				}
+				state.Player = maxSpeedIndex;
+				state.maxMenuItem = state.Players[state.Player].at(maxSpeedPlayer).AttackCount;
+				state.MenuItem = 0;
+
+				state.IsRunning = true;
+				state.CurrentMenu = GameMenu_AttackSelection;
 			}
+
+			if (state.IsRunning)
+			{
+				for (int i = 0; i < PLAYER_COUNT; i++)
+				{
+					int hpSum = 0;
+					for (auto& p : state.Players[i])
+					{
+						hpSum += p.HP;
+					}
+					if (!hpSum)
+						state.GameOver = true;
+				}
+			}
+
+			SDL_RenderClear(renderer);
+			DrawBackground(renderer, SCREEN_WIDTH, SCREEN_HEIGHT);
+
+			DrawUI(renderer, state);
+
+			SDL_RenderPresent(renderer);
 		}
 
-		SDL_RenderClear(renderer);
-		DrawBackground(renderer, SCREEN_WIDTH, SCREEN_HEIGHT);
+		for (auto pok : pokemons)
+		{
+			pok.Destroy();
+		}
+		SDL_DestroyWindow(window);
+		Mix_FreeMusic(bgm);
+		Mix_CloseAudio();
 
-		DrawUI(renderer, state);
-
-		SDL_RenderPresent(renderer);
+		SDL_Quit();
 	}
-
-	for (auto pok : pokemons)
+	catch (const std::exception& e)
 	{
-		pok.Destroy();
+		std::cerr << e.what() << std::endl;
 	}
-	SDL_DestroyWindow(window);
-	Mix_FreeMusic(bgm);
-	Mix_CloseAudio();
-
-	SDL_Quit();
 }

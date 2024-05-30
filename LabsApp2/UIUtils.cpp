@@ -9,19 +9,29 @@ void DrawUI(SDL_Renderer*& renderer, GameState& state)
 {
 	if (state.IsRunning)
 	{
-		DrawHealthBar(renderer, 0, 0, 192, 32, state.Players[0].HP, state.Players[0].MaxHP);
-		DrawHealthBar(renderer, 448, 0, 192, 32, state.Players[1].HP, state.Players[1].MaxHP);
-
-		DrawEnergyBar(renderer, 0, 40, 192, 32, state.Players[0].Energy, state.Players[0].MaxEnergy);
-		DrawEnergyBar(renderer, 448, 40, 192, 32, state.Players[1].Energy, state.Players[1].MaxEnergy);
-
-		if (state.CurrentMenu == GameMenu_AttackSelection && !state.GameOver)
+		int x = 32;
+		int y = 16;
+		for (int i = 0; i < PLAYER_COUNT; i++) 
 		{
-			DrawAttackSelect(renderer, state, &state.Players[state.Player]);
+			int j = 0;
+			for (auto& p : state.Players[i])
+			{
+				DrawHealthBar(renderer, x, y, 96, 16, p.HP, p.MaxHP);
+				DrawEnergyBar(renderer, x, y + 24, 96, 16, p.Energy, p.MaxEnergy);
+
+				if (state.CurrentMenu == GameMenu_AttackSelection && !state.GameOver && state.CurrentPokemon[state.Player] == j)
+				{
+					DrawAttackSelect(renderer, state, &p);
+				}
+
+				p.Draw(renderer, x, y + 48, 96, 96, i);
+				y += 160;
+				j++;
+			}
+			x += 480;
+			y = 16;
 		}
 
-		state.Players[0].Draw(renderer, 64, 96, 192, 192, false);
-		state.Players[1].Draw(renderer, 384, 96, 192, 192, true);
 
 		if (state.GameOver)
 		{
@@ -30,7 +40,12 @@ void DrawUI(SDL_Renderer*& renderer, GameState& state)
 			auto w = 640;
 			auto h = 32;
 			auto color = SDL_Color(255, 255, 255, 0);
-			std::string str = state.Players[0].HP == 0 ? "Player 2 wins!" : "Player 1 wins!";
+			int hpSum = 0;
+			for (auto p : state.Players[0])
+			{
+				hpSum += p.HP;
+			}
+			std::string str = hpSum == 0 ? "Player 2 wins!" : "Player 1 wins!";
 			DrawTextCentered(renderer, str, x, y, w, h, color);
 		}
 	}
@@ -69,13 +84,13 @@ void DrawUI(SDL_Renderer*& renderer, GameState& state)
 			std::string str = "Player 2, choose your Pokemon";
 			DrawTextCentered(renderer, str, x, y, w, h, color);
 		}
-		
+
 	}
 }
 
 void DrawAttackSelect(SDL_Renderer*& renderer, GameState& state, Pokemon* pokemon)
 {
-	auto attackCount = state.Players[state.Player].AttackCount;
+	auto attackCount = pokemon->AttackCount;
 
 	auto x = 32;
 	auto y = 384;
@@ -90,11 +105,11 @@ void DrawAttackSelect(SDL_Renderer*& renderer, GameState& state, Pokemon* pokemo
 	SDL_RenderFillRect(renderer, &rect);
 
 	rect = SDL_Rect(x + border, y + border, w - border * 2, h - border * 2);
-	SDL_SetRenderDrawColor(renderer, 128, 128,128, 0);
+	SDL_SetRenderDrawColor(renderer, 128, 128, 128, 0);
 	SDL_RenderFillRect(renderer, &rect);
 
 	SDL_Color color;
-	for (int i = 0; i < attackCount; i++) 
+	for (int i = 0; i < attackCount; i++)
 	{
 		int y1 = y + i * 32;
 		color = state.MenuItem == i ? SDL_Color(32, 32, 255, 0) : SDL_Color(96, 96, 192, 0);
@@ -161,12 +176,12 @@ void DrawText(SDL_Renderer*& renderer, std::string& text, int& x, int& y, SDL_Co
 
 void DrawTextCentered(SDL_Renderer*& renderer, std::string& text, int& x, int& y, int& w, int& h, SDL_Color& color)
 {
-	static auto sans = TTF_OpenFont("data/fonts/main_font.ttf", 18);
+	static auto sans = TTF_OpenFont("data/fonts/main_font.ttf", 14);
 
 	SDL_Surface* surfaceMessage = TTF_RenderText_Blended(sans, text.data(), color);
 	SDL_Texture* message = SDL_CreateTextureFromSurface(renderer, surfaceMessage);
 
-	SDL_Rect rect = { x + (w / 2) - surfaceMessage->w / 2, y + (h / 2) - surfaceMessage->h / 2, surfaceMessage->w, surfaceMessage->h};
+	SDL_Rect rect = { x + (w / 2) - surfaceMessage->w / 2, y + (h / 2) - surfaceMessage->h / 2, surfaceMessage->w, surfaceMessage->h };
 
 	SDL_RenderCopy(renderer, message, nullptr, &rect);
 
