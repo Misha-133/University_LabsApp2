@@ -4,4 +4,4 @@
 
 #include "Pokemon.h"
 
-std::vector<Pokemon> LoadPokemons(const std::string&, SDL_Renderer*&);
+std::vector<Pokemon> load_pokemons(const std::string&, SDL_Renderer*&);

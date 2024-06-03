@@ -8,7 +8,7 @@
 #include <SDL_image.h>
 
 
-std::vector<Pokemon> LoadPokemons(const std::string& path, SDL_Renderer*& renderer)
+std::vector<Pokemon> load_pokemons(const std::string& path, SDL_Renderer*& renderer)
 {
 	auto pokemons = std::vector<Pokemon>();
 
@@ -18,8 +18,8 @@ std::vector<Pokemon> LoadPokemons(const std::string& path, SDL_Renderer*& render
 		if (is_directory(entry))
 		{
 			auto pokemon = Pokemon();
-			pokemon.Name = entry.path().filename().string();
-			pokemon.Id = c;
+			pokemon.name = entry.path().filename().string();
+			pokemon.id = c;
 
 			auto texture = IMG_LoadTexture(renderer, entry.path().string().append("/texture.png").data());
 			if (!texture)
@@ -27,7 +27,7 @@ std::vector<Pokemon> LoadPokemons(const std::string& path, SDL_Renderer*& render
 				std::cout << "IMG_LoadTexture Error: " << SDL_GetError() << '\n';
 				continue;
 			}
-			pokemon.Texture = texture;
+			pokemon.texture = texture;
 
 			std::ifstream file(entry.path().string().append("/stats.txt").data());
 
@@ -37,19 +37,19 @@ std::vector<Pokemon> LoadPokemons(const std::string& path, SDL_Renderer*& render
 				continue;
 			}
 
-			file >> pokemon.Name;
-			file >> pokemon.HP;
-			pokemon.MaxHP = pokemon.HP;
-			file >> pokemon.Energy;
-			pokemon.MaxEnergy = pokemon.Energy;
-			file >> pokemon.Weakness;
-			file >> pokemon.Speed;
+			file >> pokemon.name;
+			file >> pokemon.hp;
+			pokemon.max_hp = pokemon.hp;
+			file >> pokemon.energy;
+			pokemon.max_energy = pokemon.energy;
+			file >> pokemon.weakness;
+			file >> pokemon.speed;
 			int t;
 			file >> t;
-			pokemon.Type = static_cast<PokemonType>(t);
-			file >> pokemon.AttackCount;
+			pokemon.type = static_cast<PokemonType>(t);
+			file >> pokemon.attack_count;
 
-			for (int i = 0; i < pokemon.AttackCount; i++)
+			for (int i = 0; i < pokemon.attack_count; i++)
 			{
 				auto attack = Attack();
 				file.clear();
@@ -59,7 +59,7 @@ std::vector<Pokemon> LoadPokemons(const std::string& path, SDL_Renderer*& render
 				file >> attack.Damage;
 				file >> attack.EnergyCost;
 
-				pokemon.Attacks.push_back(attack);
+				pokemon.attacks.push_back(attack);
 			}
 
 			file.close();

@@ -9,22 +9,22 @@
 
 struct Pokemon
 {
-	int Id;
-	std::string Name;
+	int id;
+	std::string name;
 
-	unsigned int HP;
-	unsigned int MaxHP;
-	unsigned int Energy;
-	unsigned int MaxEnergy;
-	unsigned int Weakness;
-	unsigned int Speed;
-	unsigned int AttackCount;
-	PokemonType Type;
+	unsigned int hp;
+	unsigned int max_hp;
+	unsigned int energy;
+	unsigned int max_energy;
+	unsigned int weakness;
+	unsigned int speed;
+	unsigned int attack_count;
+	PokemonType type;
 
-	std::vector<Attack> Attacks;
+	std::vector<Attack> attacks;
 
-	SDL_Texture *Texture;
+	SDL_Texture *texture;
 
-	void Destroy();
-	void Draw(SDL_Renderer*& renderer, int x, int y, int w, int h, bool mirror);
+	void destroy();
+	void draw(SDL_Renderer*& renderer, int x, int y, int w, int h, bool mirror);
 };

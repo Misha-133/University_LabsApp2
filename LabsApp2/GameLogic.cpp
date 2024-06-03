@@ -27,20 +27,17 @@ unsigned int get_damage(PokemonType t1, PokemonType t2, unsigned int damage)
 	return damage;
 }
 
-bool DamagePlayer(Pokemon& attacker, std::vector<Pokemon>& victim, int attack)
+bool damage_player(Pokemon& attacker, Pokemon& victim, int attack)
 {
-	if (attacker.Energy < attacker.Attacks[attack].EnergyCost)
+	if (attacker.energy < attacker.attacks[attack].EnergyCost)
 		return false;
 
-	for (auto& p : victim)
-	{
-		unsigned int dmg = get_damage(attacker.Type, p.Type, attacker.Attacks[attack].Damage);
+	unsigned int dmg = get_damage(attacker.type, victim.type, attacker.attacks[attack].Damage);
 
-		p.HP -= dmg;
-		if (p.HP > p.MaxHP)
-			p.HP = 0;
-	}
-	attacker.Energy -= attacker.Attacks[attack].EnergyCost;
+	victim.hp -= dmg;
+	if (victim.hp > victim.max_hp)
+		victim.hp = 0;
+	attacker.energy -= attacker.attacks[attack].EnergyCost;
 
 	return true;
 }

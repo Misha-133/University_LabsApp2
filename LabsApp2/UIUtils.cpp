@@ -5,35 +5,44 @@
 
 #include "GameState.h"
 
-void DrawUI(SDL_Renderer*& renderer, GameState& state)
+void draw_ui(SDL_Renderer*& renderer, GameState& state)
 {
-	if (state.IsRunning)
+	if (state.is_running)
 	{
 		int x = 32;
 		int y = 16;
-		for (int i = 0; i < PLAYER_COUNT; i++) 
+		for (int i = 0; i < PLAYER_COUNT; i++)
 		{
 			int j = 0;
-			for (auto& p : state.Players[i])
+			for (auto& p : state.players[i])
 			{
-				DrawHealthBar(renderer, x, y, 96, 16, p.HP, p.MaxHP);
-				DrawEnergyBar(renderer, x, y + 24, 96, 16, p.Energy, p.MaxEnergy);
+				draw_health_bar(renderer, x, y, 96, 16, p.hp, p.max_hp);
+				draw_energy_bar(renderer, x, y + 20, 96, 16, p.energy, p.max_energy);
 
-				if (state.CurrentMenu == GameMenu_AttackSelection && !state.GameOver && state.CurrentPokemon[state.Player] == j)
+				auto r = SDL_Rect(x, y + 40, 96, 96);
+
+				if (state.player == i && state.current_pokemon[i] == j)
 				{
-					DrawAttackSelect(renderer, state, &p);
+					SDL_SetRenderDrawColor(renderer, 128, 128, 96, 0);
+					SDL_RenderDrawRect(renderer, &r);
 				}
 
-				p.Draw(renderer, x, y + 48, 96, 96, i);
+				p.draw(renderer, x, y + 40, 96, 96, i);
 				y += 160;
 				j++;
+			}
+
+
+			if (state.current_menu == GameMenu_AttackSelection && !state.game_over)
+			{
+				draw_attack_select(renderer, state, state.get_current_pokemon());
 			}
 			x += 480;
 			y = 16;
 		}
 
 
-		if (state.GameOver)
+		if (state.game_over)
 		{
 			auto x = 0;
 			auto y = 0;
@@ -41,32 +50,41 @@ void DrawUI(SDL_Renderer*& renderer, GameState& state)
 			auto h = 32;
 			auto color = SDL_Color(255, 255, 255, 0);
 			int hpSum = 0;
-			for (auto p : state.Players[0])
+			for (auto p : state.players[0])
 			{
-				hpSum += p.HP;
+				hpSum += p.hp;
 			}
-			std::string str = hpSum == 0 ? "Player 2 wins!" : "Player 1 wins!";
-			DrawTextCentered(renderer, str, x, y, w, h, color);
+			std::string str = hpSum == 0 ? "player 2 wins!" : "player 1 wins!";
+			draw_text_centered_large(renderer, str, x, y, w, h, color);
 		}
 	}
 	else
 	{
-		for (int i = 0; i < state.maxMenuItem; i++)
+		for (int i = 0; i < state.max_menu_item; i++)
 		{
 			int x = 64;
 			int y = 64 + i * 32;
 			int w = 256;
 			int h = 32;
-			auto color = state.MenuItem == i ? SDL_Color(32, 32, 255, 0) : SDL_Color(96, 96, 192, 0);
-			DrawTextCentered(renderer, state.AllPokemons->at(i).Name, x, y, w, h, color);
-			if (state.MenuItem == i)
+			auto r = SDL_Rect(x, y, w, h);
+			SDL_SetRenderDrawColor(renderer, 32, 32, 32, 0);
+			SDL_RenderFillRect(renderer, &r);
+
+			if (state.menu_item == i)
 			{
-				auto r = SDL_Rect(x, y, w, h);
-				SDL_SetRenderDrawColor(renderer, 64, 64, 96, 0);
-				SDL_RenderDrawRect(renderer, &r);
+				SDL_SetRenderDrawColor(renderer, 128, 128, 96, 0);
+				SDL_RenderFillRect(renderer, &r);
+
+				r = SDL_Rect(x + 2, y + 2, w - 4, h - 4);
+				SDL_SetRenderDrawColor(renderer, 32, 32, 32, 0);
+				SDL_RenderFillRect(renderer, &r);
 			}
 
-			state.AllPokemons->at(i).Draw(renderer, 24, y, 32, 32, false);
+			auto color = state.menu_item == i ? SDL_Color(192, 192, 255, 0) : SDL_Color(96, 96, 192, 0);
+			draw_text_centered_large(renderer, state.all_pokemons->at(i).name, x, y, w, h, color);
+
+
+			state.all_pokemons->at(i).draw(renderer, 24, y, 32, 32, false);
 		}
 
 		int x = 0;
@@ -74,26 +92,26 @@ void DrawUI(SDL_Renderer*& renderer, GameState& state)
 		int w = 640;
 		int h = 32;
 		auto color = SDL_Color(255, 255, 255, 0);
-		if (state.CurrentMenu == GameMenu_PokemonSelection1)
+		if (state.current_menu == GameMenu_PokemonSelection1)
 		{
-			std::string str = "Player 1, choose your Pokemon";
-			DrawTextCentered(renderer, str, x, y, w, h, color);
+			std::string str = "player 1, choose your Pokemon";
+			draw_text_centered_large(renderer, str, x, y, w, h, color);
 		}
-		else if (state.CurrentMenu == GameMenu_PokemonSelection2)
+		else if (state.current_menu == GameMenu_PokemonSelection2)
 		{
-			std::string str = "Player 2, choose your Pokemon";
-			DrawTextCentered(renderer, str, x, y, w, h, color);
+			std::string str = "player 2, choose your Pokemon";
+			draw_text_centered_large(renderer, str, x, y, w, h, color);
 		}
 
 	}
 }
 
-void DrawAttackSelect(SDL_Renderer*& renderer, GameState& state, Pokemon* pokemon)
+void draw_attack_select(SDL_Renderer*& renderer, GameState& state, Pokemon* pokemon)
 {
-	auto attackCount = pokemon->AttackCount;
+	auto attackCount = pokemon->attack_count;
 
 	auto x = 32;
-	auto y = 384;
+	auto y = POKEMON_COUNT * 128 + 128;
 	auto w = 576;
 	auto h = 32 * attackCount;
 	int h1 = (int)h / attackCount;
@@ -112,13 +130,13 @@ void DrawAttackSelect(SDL_Renderer*& renderer, GameState& state, Pokemon* pokemo
 	for (int i = 0; i < attackCount; i++)
 	{
 		int y1 = y + i * 32;
-		color = state.MenuItem == i ? SDL_Color(32, 32, 255, 0) : SDL_Color(96, 96, 192, 0);
-		auto str = pokemon->Attacks[i].Name + "     D: " + std::to_string(pokemon->Attacks[i].Damage) + "     E: " + std::to_string(pokemon->Attacks[i].EnergyCost);
-		DrawTextCentered(renderer, str, x, y1, w, h1, color);
+		color = state.menu_item == i ? SDL_Color(32, 32, 255, 0) : SDL_Color(96, 96, 192, 0);
+		auto str = pokemon->attacks[i].Name + "     D: " + std::to_string(pokemon->attacks[i].Damage) + "     E: " + std::to_string(pokemon->attacks[i].EnergyCost);
+		draw_text_centered_large(renderer, str, x, y1, w, h1, color);
 	}
 }
 
-void DrawHealthBar(SDL_Renderer*& renderer, int x, int y, int w, int h, unsigned int value, unsigned int total)
+void draw_health_bar(SDL_Renderer*& renderer, int x, int y, int w, int h, unsigned int value, unsigned int total)
 {
 	auto rect = SDL_Rect(x, y, w, h);
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 0);
@@ -135,10 +153,10 @@ void DrawHealthBar(SDL_Renderer*& renderer, int x, int y, int w, int h, unsigned
 
 	auto str = std::to_string(value) + "/" + std::to_string(total);
 
-	DrawTextCentered(renderer, str, x, y, w, h, hpColor);
+	draw_text_centered_small(renderer, str, x, y, w, h, hpColor);
 }
 
-void DrawEnergyBar(SDL_Renderer*& renderer, int x, int y, int w, int h, unsigned int value, unsigned int total)
+void draw_energy_bar(SDL_Renderer*& renderer, int x, int y, int w, int h, unsigned int value, unsigned int total)
 {
 	auto rect = SDL_Rect(x, y, w, h);
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 0);
@@ -155,28 +173,12 @@ void DrawEnergyBar(SDL_Renderer*& renderer, int x, int y, int w, int h, unsigned
 
 	auto str = std::to_string(value) + "/" + std::to_string(total);
 
-	DrawTextCentered(renderer, str, x, y, w, h, hpColor);
+	draw_text_centered_small(renderer, str, x, y, w, h, hpColor);
 }
 
-
-void DrawText(SDL_Renderer*& renderer, std::string& text, int& x, int& y, SDL_Color& color)
+void draw_text_centered_small(SDL_Renderer*& renderer, std::string& text, int& x, int& y, int& w, int& h, SDL_Color& color)
 {
-	static auto sans = TTF_OpenFont("data/fonts/main_font.ttf", 18);
-
-	SDL_Surface* surfaceMessage = TTF_RenderText_Blended(sans, text.data(), color);
-	SDL_Texture* message = SDL_CreateTextureFromSurface(renderer, surfaceMessage);
-
-	SDL_Rect rect = { x, y, surfaceMessage->w, surfaceMessage->h };
-
-	SDL_RenderCopy(renderer, message, nullptr, &rect);
-
-	SDL_FreeSurface(surfaceMessage);
-	SDL_DestroyTexture(message);
-}
-
-void DrawTextCentered(SDL_Renderer*& renderer, std::string& text, int& x, int& y, int& w, int& h, SDL_Color& color)
-{
-	static auto sans = TTF_OpenFont("data/fonts/main_font.ttf", 14);
+	static auto sans = TTF_OpenFont("data/fonts/main_font.ttf", 12);
 
 	SDL_Surface* surfaceMessage = TTF_RenderText_Blended(sans, text.data(), color);
 	SDL_Texture* message = SDL_CreateTextureFromSurface(renderer, surfaceMessage);
@@ -189,9 +191,23 @@ void DrawTextCentered(SDL_Renderer*& renderer, std::string& text, int& x, int& y
 	SDL_DestroyTexture(message);
 }
 
-void DrawBackground(SDL_Renderer*& renderer, int w, int h)
+void draw_text_centered_large(SDL_Renderer*& renderer, std::string& text, int& x, int& y, int& w, int& h, SDL_Color& color)
 {
-	SDL_SetRenderDrawColor(renderer, 48, 48, 48, 0);
+	static auto sans = TTF_OpenFont("data/fonts/main_font.ttf", 24);
+
+	SDL_Surface* surfaceMessage = TTF_RenderText_Blended(sans, text.data(), color);
+	SDL_Texture* message = SDL_CreateTextureFromSurface(renderer, surfaceMessage);
+
+	SDL_Rect rect = { x + (w / 2) - surfaceMessage->w / 2, y + (h / 2) - surfaceMessage->h / 2, surfaceMessage->w, surfaceMessage->h };
+
+	SDL_RenderCopy(renderer, message, nullptr, &rect);
+
+	SDL_FreeSurface(surfaceMessage);
+	SDL_DestroyTexture(message);
+}
+
+void draw_background(SDL_Renderer*& renderer, int w, int h, SDL_Texture* background_image)
+{
 	auto backgroundRect = SDL_Rect(0, 0, w, h);
-	SDL_RenderFillRect(renderer, &backgroundRect);
+	SDL_RenderCopyEx(renderer, background_image, nullptr, &backgroundRect, 0, 0, SDL_FLIP_NONE);
 }
