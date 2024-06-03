@@ -62,10 +62,10 @@ void draw_ui(SDL_Renderer*& renderer, GameState& state)
 	{
 		for (int i = 0; i < state.max_menu_item; i++)
 		{
-			int x = 64;
-			int y = 64 + i * 32;
 			int w = 256;
 			int h = 32;
+			int x = SCREEN_WIDTH / 2 - w / 2;
+			int y = 64 + i * 32;
 			auto r = SDL_Rect(x, y, w, h);
 			SDL_SetRenderDrawColor(renderer, 32, 32, 32, 0);
 			SDL_RenderFillRect(renderer, &r);
@@ -81,10 +81,11 @@ void draw_ui(SDL_Renderer*& renderer, GameState& state)
 			}
 
 			auto color = state.menu_item == i ? SDL_Color(192, 192, 255, 0) : SDL_Color(96, 96, 192, 0);
-			draw_text_centered_large(renderer, state.all_pokemons->at(i).name, x, y, w, h, color);
+			int x1 = x + 40;
+			draw_text_centered_large(renderer, state.all_pokemons->at(i).name, x1, y, w, h, color);
 
 
-			state.all_pokemons->at(i).draw(renderer, 24, y, 32, 32, false);
+			state.all_pokemons->at(i).draw(renderer, x, y, 32, 32, false);
 		}
 
 		int x = 0;
